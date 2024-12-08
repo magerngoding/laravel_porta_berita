@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('banner_advertisments', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('icon');
-            $table->string('slug')->unique(); // harus unik
-            $table->softDeletes(); // hanya hilang data dari UI
+            $table->string('link');
+            $table->string('type');
+            $table->string('thumbnail');
+            $table->enum('is_active', ['active', 'not_active'])->default('not_active');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('banner_advertisments');
     }
 };
