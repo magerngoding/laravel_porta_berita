@@ -38,6 +38,53 @@ class FrontController extends Controller
             // ->take(1)
             ->first();
 
-        return view('front.index', compact('categories', 'articles', 'authors', 'featured_articles', 'bannerads')); // compact kirim ke halaman depan
+        // Entertaiment not featured
+        $entertainment_articles = ArticleNews::whereHas('category', function ($query) {
+            $query->where('name', 'Entertainment');
+        })
+            ->where('is_featured', 'not_featured')
+            ->latest()
+            ->take(6)
+            ->get();
+
+        // Entertaiment featured
+        $entertainment_featured_articles = ArticleNews::whereHas('category', function ($query) {
+            $query->where('name', 'Entertainment');
+        })
+            ->where('is_featured', 'featured')
+            ->inRandomOrder()
+            ->first();
+
+        // Automotive not featured
+        $automotive_articles = ArticleNews::whereHas('category', function ($query) {
+            $query->where('name', 'Automotive');
+        })
+            ->where('is_featured', 'not_featured')
+            ->latest()
+            ->take(6)
+            ->get();
+
+        // Automotive featured
+        $automotive_featured_articles = ArticleNews::whereHas('category', function ($query) {
+            $query->where('name', 'Automotive');
+        })
+            ->where('is_featured', 'featured')
+            ->inRandomOrder()
+            ->first();
+
+
+        return view('front.index', compact('automotive_articles', 'automotive_featured_articles', 'entertainment_featured_articles', 'entertainment_articles', 'categories', 'articles', 'authors', 'featured_articles', 'bannerads')); // compact kirim ke halaman depan
+    }
+
+    // Menampilkan data model bindding misal pilih automotive nanti yg keluar berita list automotive -> Category $category
+    public function category(Category $category)
+    {
+        $categories = Category::all();
+        $bannerads = BannerAdvertisment::where('is_active', 'active')
+            ->where('type', 'banner')
+            ->inRandomOrder()
+            ->first();
+
+        return view('front.category', compact('category', 'categories', 'bannerads'));
     }
 }
